@@ -62,7 +62,6 @@ def get_vaild_sender(dr, rd_black, rd_black_s, rd_history, rd_history_s, timesta
 g_log_path = "/data/log/weibo_forward_clicklike_hot/wb_clicklike_mobile.log"
 
 def wb_process(mid,upnum,redisIns,rediskey):
-    log.INFO("这事什么啊")
     args={"rd_black_h":"127.0.0.1","rd_black_p":'6379',"rd_black_s":"weibo_black","rd_history_h":"127.0.0.1","rd_history_p":"6379","rd_history_s":"weibo_history_user_id","wb_omid":str(mid),"like_num":upnum,"timestart":0,"timeout":23,"gap":float(1),"remote_qusers":"remote_redis_file.list","log":True,"level":4} 
     log.setLoginfo(g_log_path, args["level"] ,args["log"])
     
@@ -85,7 +84,7 @@ def wb_process(mid,upnum,redisIns,rediskey):
             continue
 
         like_ok += 1
-        #redisIns.incr(rediskey)
+        redisIns.incr(rediskey)
         log.INFO('like_ok: %d' % like_ok)
 
         set_sender_history(rd_history, args["rd_history_s"], user['uid'])
@@ -169,4 +168,3 @@ if __name__ == "__main__":
    #     set_sender_history(rd_history, args.rd_history_s, user['uid'])
 
    #     time.sleep(args.gap)
-   wb_main(10,1,2,3,4)
