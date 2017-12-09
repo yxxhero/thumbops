@@ -27,9 +27,9 @@ manager = Manager(app)
 class tasklist(db.Model):
     __tablename__ = 'tasklist'
     id = db.Column(db.Integer, primary_key=True)
-    taskid = db.Column(db.String(100), unique=True)
+    taskid = db.Column(db.String(100),nullable=False)
     processesnum = db.Column(db.Integer)
-    title = db.Column(db.Text(86400))
+    title = db.Column(db.Text(86400),nullable=False)
     wburl = db.Column(db.String(3000))
     upnum=db.Column(db.Integer)
     percent = db.Column(db.String(320),nullable=True)

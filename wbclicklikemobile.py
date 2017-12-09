@@ -101,7 +101,7 @@ def wb_main(processesnum,mid,upnum,redisIns,rediskey):
     #pro_pool.join()
     #print "stop"
 #独立执行时操作
-if __name__ == "__main__":
+#if __name__ == "__main__":
    # parser = argparse.ArgumentParser(description="""微博点赞""")
    # parser.add_argument('--rd-black-h', action="store", dest='rd_black_h',
    #         default='127.0.0.1', type=str,

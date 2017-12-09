@@ -162,6 +162,8 @@ def handle():
             return jsonify({"error":1,"msg":"请检测您的输入"})
         else:
             mid,title=Get_Mid(wbmid)
+            if len(title)==0 or title==None:
+                title="未获得标题"
             create_time=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
             db.session.add(tasklist(taskid=mid,wburl=wbmid,processesnum=processesnum,title=title,upnum=upnum,create_time=create_time))
             db.session.commit()
@@ -177,19 +179,27 @@ def tasklistinfo():
     try:
         task_list=tasklist.query.all()
         for item in task_list:
-           rediskey=str(item.create_time)+str(item.taskid)
-           rins = redis.Redis(connection_pool=redis_pool)
-           if rins.get(rediskey) == None:
-               likenum=0
-           else:
-               likenum=rins.get(rediskey)
-           total=item.processesnum*item.upnum
-           pcent=str(float(likenum)/float(total)*100)+"%"
-           item.percent=pcent
-           db.session.commit()
-           taskinfo["data"].append({"id":item.id,"date":str(item.create_time),"taskid":item.taskid,"total":total,"percent":pcent,"title":"<a target='_blank' href="+item.wburl+">"+item.title+"</a>","status":statusdic[item.status]}) 
+            total=item.processesnum*item.upnum
+            if item.status==1:
+                rediskey=str(item.create_time)+str(item.taskid)
+                rins = redis.Redis(connection_pool=redis_pool)
+                if rins.get(rediskey) == None:
+                    likenum=0
+                else:
+                    likenum=rins.get(rediskey)
+                pcent=str(float(likenum)/float(total)*100)+"%"
+                item.percent=pcent
+                if int(likenum) >=int(total):
+                     item.status=2
+                db.session.commit()
+                taskinfo["data"].append({"id":item.id,"date":str(item.create_time),"taskid":item.taskid,"total":total,"percent":pcent,"title":"<a target='_blank' href="+item.wburl+">"+item.title+"</a>","status":statusdic[item.status]}) 
+            elif item.status==0:
+                taskinfo["data"].append({"id":item.id,"date":str(item.create_time),"taskid":item.taskid,"total":total,"percent":"0.0%","title":"<a target='_blank' href="+item.wburl+">"+item.title+"</a>","status":statusdic[item.status]}) 
+            elif item.status==2:
+                taskinfo["data"].append({"id":item.id,"date":str(item.create_time),"taskid":item.taskid,"total":total,"percent":"100%","title":"<a target='_blank' href="+item.wburl+">"+item.title+"</a>","status":statusdic[item.status]}) 
     except Exception as e:
-        logging.error(str(e))
+        print e
+        logging.error("taskinfo"+str(e))
         taskinfo["code"]=1
         taskinfo["msg"]=""
         taskinfo["count"]=1000

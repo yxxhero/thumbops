@@ -71,8 +71,8 @@ function updatetable(){
 tableIns.reload();
 } 
 
-var checkth=setInterval(checkproc,30000);
-var uptable=setInterval(updatetable,5000);
+var checkth=setInterval(checkproc,10000);
+var uptable=setInterval(updatetable,60000);
 table.on('tool(tasklt)', function(obj){ 
   var data = obj.data; 
   var layEvent = obj.event;
